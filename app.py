@@ -17,8 +17,11 @@ if st.button("Predict Next Price"):
         df, pred = train_and_predict(ticker)
         st.line_chart(df["Close"])
 
-        latest_price = round(df["Close"].iloc[-1], 2)
-        predicted_price = round(pred, 2)
+        if "Close" in df.columns and not df["Close"].empty:
+            latest_price = float(df["Close"].values[-1])
+            predicted_price = float(pred)
 
-        st.metric("📌 Latest Price", f"₹ {latest_price}")
-        st.metric("🔮 Predicted Next Price", f"₹ {predicted_price}")
+            st.metric("📌 Latest Price", f"₹ {latest_price:.2f}")
+            st.metric("🔮 Predicted Next Price", f"₹ {predicted_price:.2f}")
+        else:
+            st.error("No closing price data available. Please try another ticker.")
