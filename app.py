@@ -5,7 +5,12 @@ from model import train_and_predict
 st.set_page_config(page_title="📈 Stock Price Predictor")
 
 st.title("📊 Real-Time Stock Price Predictor")
-ticker = st.text_input("Enter Stock Ticker (e.g., AAPL, RELIANCE.NS)", value="AAPL")
+
+# Dropdown menu for popular Indian stocks
+ticker = st.selectbox("Select Stock Ticker", [
+    "RELIANCE.NS", "TCS.NS", "INFY.NS", "HDFCBANK.NS", "ICICIBANK.NS",
+    "SBIN.NS", "LT.NS", "ITC.NS", "AXISBANK.NS", "BHARTIARTL.NS"
+])
 
 if st.button("Predict Next Price"):
     with st.spinner("Training model and fetching data..."):
@@ -13,3 +18,4 @@ if st.button("Predict Next Price"):
         st.line_chart(df["Close"])
         st.write("### 📌 Latest Price:", round(df['Close'].iloc[-1], 2))
         st.write("### 🔮 Predicted Next Price:", round(pred, 2))
+
