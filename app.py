@@ -18,10 +18,13 @@ if st.button("Predict Next Price"):
             df, pred = train_and_predict(ticker)
 
             if "Close" in df.columns and not df["Close"].empty:
-                # Extract latest close price safely
-                latest_price = float(df["Close"].iloc[-1])
+                close_series = df["Close"]
+                if isinstance(close_series.iloc[-1], (float, int)):
+                    latest_price = float(close_series.iloc[-1])
+                else:
+                    st.error("Unable to parse latest close price correctly.")
+                    st.stop()
 
-                # Extract predicted value safely
                 if hasattr(pred, "item"):
                     predicted_price = float(pred.item())
                 elif hasattr(pred, "__getitem__") and len(pred) == 1:
