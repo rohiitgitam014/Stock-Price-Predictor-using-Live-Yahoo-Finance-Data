@@ -1,6 +1,7 @@
 # app.py
 import streamlit as st
 from model import train_and_predict
+import pandas as pd  # Required for MultiIndex check
 
 st.set_page_config(page_title="📈 Stock Price Predictor")
 
@@ -37,8 +38,19 @@ if st.button("Predict Next Price"):
                     st.stop()
 
                 df = df.copy()
+
+                # Flatten multi-index columns if needed
+                if isinstance(df.columns, pd.MultiIndex):
+                    df.columns = ['_'.join(col).strip() for col in df.columns.values]
+
+                # Rename any column that contains 'Close'
+                for col in df.columns:
+                    if 'Close' in col:
+                        df.rename(columns={col: 'Close'}, inplace=True)
+
                 df["Datetime"] = df.index
                 df.set_index("Datetime", inplace=True)
+
                 st.line_chart(df[["Close"]])
                 st.metric("📌 Latest Price", f"₹ {latest_price:.2f}")
                 st.metric("🔮 Predicted Next Price", f"₹ {predicted_price:.2f}")
