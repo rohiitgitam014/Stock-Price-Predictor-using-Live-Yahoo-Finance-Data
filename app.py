@@ -19,7 +19,7 @@ if st.button("Predict Next Price"):
 
         if "Close" in df.columns and not df["Close"].empty:
             latest_price = df["Close"].iloc[-1]
-            predicted_price = pred[0] if hasattr(pred, "__getitem__") else pred
+            predicted_price = pred.item() if hasattr(pred, "item") else pred
 
             st.metric("📌 Latest Price", f"₹ {latest_price:.2f}")
             st.metric("🔮 Predicted Next Price", f"₹ {predicted_price:.2f}")
