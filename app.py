@@ -36,7 +36,10 @@ if st.button("Predict Next Price"):
                     st.error(f"Error parsing predicted price: {e}")
                     st.stop()
 
-                st.line_chart(df["Close"])
+                df = df.copy()
+                df["Datetime"] = df.index
+                df.set_index("Datetime", inplace=True)
+                st.line_chart(df[["Close"]])
                 st.metric("📌 Latest Price", f"₹ {latest_price:.2f}")
                 st.metric("🔮 Predicted Next Price", f"₹ {predicted_price:.2f}")
             else:
