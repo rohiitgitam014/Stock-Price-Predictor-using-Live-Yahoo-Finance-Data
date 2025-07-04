@@ -1,7 +1,6 @@
 # app.py
 import streamlit as st
 from model import train_and_predict
-import pandas as pd
 
 st.set_page_config(page_title="📈 Stock Price Predictor")
 
@@ -28,45 +27,3 @@ if st.button("Predict Next Price"):
 
                 try:
                     if hasattr(pred, "item"):
-                        predicted_price = float(pred.item())
-                    elif hasattr(pred, "__getitem__") and len(pred) == 1:
-                        predicted_price = float(pred[0])
-                    else:
-                        predicted_price = float(pred)
-                except Exception as e:
-                    st.error(f"Error parsing predicted price: {e}")
-                    st.stop()
-
-                df = df.copy()
-
-                # Flatten multi-index columns if needed
-                if isinstance(df.columns, pd.MultiIndex):
-                    df.columns = ['_'.join(col).strip() for col in df.columns.values]
-
-                # Drop duplicate columns (keep first occurrence only)
-                df = df.loc[:, ~df.columns.duplicated(keep='first')]
-
-                # Rename first valid 'Close' column explicitly to avoid duplicates
-                close_cols = [col for col in df.columns if 'Close' in col and col != 'Close']
-                if close_cols:
-                    df.rename(columns={close_cols[0]: 'Close'}, inplace=True)
-
-                # Optionally remove remaining duplicate Close-like columns
-                df = df.loc[:, ~df.columns.duplicated(keep='first')]
-
-                # Rename any column that contains 'Close'
-                for col in df.columns:
-                    if 'Close' in col:
-                        df.rename(columns={col: 'Close'}, inplace=True)
-
-                df["Datetime"] = df.index
-                df.set_index("Datetime", inplace=True)
-
-                st.write("### 📄 Full Stock Price Data")
-                st.dataframe(df)
-                st.metric("📌 Latest Price", f"₹ {latest_price:.2f}")
-                st.metric("🔮 Predicted Next Price", f"₹ {predicted_price:.2f}")
-            else:
-                st.error("No valid 'Close' price data returned. Try another ticker.")
-        except Exception as e:
-            st.error(f"⚠️ An error occurred: {e}")
