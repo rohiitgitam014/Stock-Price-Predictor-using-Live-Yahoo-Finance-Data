@@ -18,19 +18,23 @@ if st.button("Predict Next Price"):
             df, pred = train_and_predict(ticker)
 
             if "Close" in df.columns and not df["Close"].empty:
-                close_series = df["Close"]
-                if isinstance(close_series.iloc[-1], (float, int)):
-                    latest_price = float(close_series.iloc[-1])
-                else:
-                    st.error("Unable to parse latest close price correctly.")
+                try:
+                    latest_price = df["Close"].iloc[-1]
+                    latest_price = latest_price.item() if hasattr(latest_price, "item") else float(latest_price)
+                except Exception as e:
+                    st.error(f"Error parsing latest closing price: {e}")
                     st.stop()
 
-                if hasattr(pred, "item"):
-                    predicted_price = float(pred.item())
-                elif hasattr(pred, "__getitem__") and len(pred) == 1:
-                    predicted_price = float(pred[0])
-                else:
-                    predicted_price = float(pred)
+                try:
+                    if hasattr(pred, "item"):
+                        predicted_price = float(pred.item())
+                    elif hasattr(pred, "__getitem__") and len(pred) == 1:
+                        predicted_price = float(pred[0])
+                    else:
+                        predicted_price = float(pred)
+                except Exception as e:
+                    st.error(f"Error parsing predicted price: {e}")
+                    st.stop()
 
                 st.line_chart(df["Close"])
                 st.metric("📌 Latest Price", f"₹ {latest_price:.2f}")
