@@ -19,7 +19,7 @@ if st.button("Predict Next Price"):
 
         if "Close" in df.columns and not df["Close"].empty:
             latest_price = float(df["Close"].values[-1])
-            predicted_price = float(pred)
+            predicted_price = float(pred[0]) if hasattr(pred, "__getitem__") else float(pred)
 
             st.metric("📌 Latest Price", f"₹ {latest_price:.2f}")
             st.metric("🔮 Predicted Next Price", f"₹ {predicted_price:.2f}")
