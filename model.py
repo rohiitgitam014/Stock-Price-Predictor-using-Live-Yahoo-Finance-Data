@@ -4,7 +4,7 @@ from sklearn.model_selection import train_test_split
 from utils import fetch_multiple_stocks
 
 def train_and_predict(ticker="AAPL"):
-    df = fetch_stock_data(ticker)
+    df = fetch_multiple_stocks(ticker)
     X = df[["Open", "High", "Low", "Close", "Volume"]]
     y = df["Next_Close"]
     
