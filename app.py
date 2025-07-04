@@ -19,7 +19,8 @@ if st.button("Predict Next Price"):
 
             if "Close" in df.columns and not df["Close"].empty:
                 try:
-                    latest_price = float(df["Close"].iloc[-1])
+                    latest_price_val = df["Close"].iloc[-1]
+                    latest_price = float(latest_price_val.values[0]) if hasattr(latest_price_val, 'values') else float(latest_price_val)
                 except Exception as e:
                     st.error(f"Error parsing latest closing price: {e}")
                     st.stop()
