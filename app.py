@@ -14,19 +14,25 @@ ticker = st.selectbox("Select Stock Ticker", [
 
 if st.button("Predict Next Price"):
     with st.spinner("Training model and fetching data..."):
-        df, pred = train_and_predict(ticker)
-        st.line_chart(df["Close"])
+        try:
+            df, pred = train_and_predict(ticker)
 
-        if "Close" in df.columns and not df["Close"].empty:
-            latest_price = float(df["Close"].iloc[-1])
-            if hasattr(pred, "item"):
-                predicted_price = float(pred.item())
-            elif hasattr(pred, "__getitem__") and len(pred) == 1:
-                predicted_price = float(pred[0])
+            if "Close" in df.columns and not df["Close"].empty:
+                # Extract latest close price safely
+                latest_price = float(df["Close"].iloc[-1])
+
+                # Extract predicted value safely
+                if hasattr(pred, "item"):
+                    predicted_price = float(pred.item())
+                elif hasattr(pred, "__getitem__") and len(pred) == 1:
+                    predicted_price = float(pred[0])
+                else:
+                    predicted_price = float(pred)
+
+                st.line_chart(df["Close"])
+                st.metric("📌 Latest Price", f"₹ {latest_price:.2f}")
+                st.metric("🔮 Predicted Next Price", f"₹ {predicted_price:.2f}")
             else:
-                predicted_price = float(pred)
-
-            st.metric("📌 Latest Price", f"₹ {latest_price:.2f}")
-            st.metric("🔮 Predicted Next Price", f"₹ {predicted_price:.2f}")
-        else:
-            st.error("No closing price data available. Please try another ticker.")
+                st.error("No valid 'Close' price data returned. Try another ticker.")
+        except Exception as e:
+            st.error(f"⚠️ An error occurred: {e}")
