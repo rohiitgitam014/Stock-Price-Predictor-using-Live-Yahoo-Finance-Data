@@ -1,7 +1,7 @@
 # model.py
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.model_selection import train_test_split
-from utils import fetch_stock_data
+from utils import fetch_multiple_stocks
 
 def train_and_predict(ticker="AAPL"):
     df = fetch_stock_data(ticker)
