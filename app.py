@@ -18,8 +18,13 @@ if st.button("Predict Next Price"):
         st.line_chart(df["Close"])
 
         if "Close" in df.columns and not df["Close"].empty:
-            latest_price = float(df.iloc[-1]["Close"])
-            predicted_price = float(pred.item()) if hasattr(pred, "item") else float(pred)
+            latest_price = df["Close"].values[-1]
+            if hasattr(pred, "item"):
+                predicted_price = pred.item()
+            elif hasattr(pred, "__getitem__") and len(pred) == 1:
+                predicted_price = pred[0]
+            else:
+                predicted_price = pred
 
             st.metric("📌 Latest Price", f"₹ {latest_price:.2f}")
             st.metric("🔮 Predicted Next Price", f"₹ {predicted_price:.2f}")
