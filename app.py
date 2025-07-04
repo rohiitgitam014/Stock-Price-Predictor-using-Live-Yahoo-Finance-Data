@@ -2,6 +2,7 @@
 import streamlit as st
 from model import train_and_predict
 import pandas as pd
+
 st.set_page_config(page_title="📈 Stock Price Predictor")
 
 st.title("📊 Real-Time Stock Price Predictor")
@@ -42,8 +43,16 @@ if st.button("Predict Next Price"):
                 if isinstance(df.columns, pd.MultiIndex):
                     df.columns = ['_'.join(col).strip() for col in df.columns.values]
 
-                # Drop duplicate columns
-                df = df.loc[:, ~df.columns.duplicated()]
+                # Drop duplicate columns (keep first occurrence only)
+                df = df.loc[:, ~df.columns.duplicated(keep='first')]
+
+                # Rename first valid 'Close' column explicitly to avoid duplicates
+                close_cols = [col for col in df.columns if 'Close' in col and col != 'Close']
+                if close_cols:
+                    df.rename(columns={close_cols[0]: 'Close'}, inplace=True)
+
+                # Optionally remove remaining duplicate Close-like columns
+                df = df.loc[:, ~df.columns.duplicated(keep='first')]
 
                 # Rename any column that contains 'Close'
                 for col in df.columns:
