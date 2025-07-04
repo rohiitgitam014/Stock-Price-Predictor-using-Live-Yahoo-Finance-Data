@@ -1,6 +1,7 @@
 # app.py
 import streamlit as st
 from model import train_and_predict
+import pandas as pd
 
 st.set_page_config(page_title="📈 Stock Price Predictor")
 
