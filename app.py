@@ -18,7 +18,7 @@ if st.button("Predict Next Price"):
         st.line_chart(df["Close"])
 
         if "Close" in df.columns and not df["Close"].empty:
-            latest_price = float(df["Close"].values[-1])
+            latest_price = float(df.iloc[-1]["Close"])
             if hasattr(pred, "item"):
                 predicted_price = float(pred.item())
             elif hasattr(pred, "__getitem__") and len(pred) == 1:
