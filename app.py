@@ -1,7 +1,6 @@
 # app.py
 import streamlit as st
 from model import train_and_predict
-import pandas as pd  # Required for MultiIndex check
 
 st.set_page_config(page_title="📈 Stock Price Predictor")
 
@@ -50,8 +49,8 @@ if st.button("Predict Next Price"):
 
                 df["Datetime"] = df.index
                 df.set_index("Datetime", inplace=True)
-
-                st.line_chart(df[["Close"]])
+                st.write("### 📄 Full Stock Price Data")
+                st.dataframe(df)
                 st.metric("📌 Latest Price", f"₹ {latest_price:.2f}")
                 st.metric("🔮 Predicted Next Price", f"₹ {predicted_price:.2f}")
             else:
