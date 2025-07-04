@@ -1,7 +1,6 @@
 # app.py
 import streamlit as st
 from model import train_and_predict
-import pandas as pd
 
 st.set_page_config(page_title="📈 Stock Price Predictor")
 
@@ -43,6 +42,9 @@ if st.button("Predict Next Price"):
                 if isinstance(df.columns, pd.MultiIndex):
                     df.columns = ['_'.join(col).strip() for col in df.columns.values]
 
+                # Drop duplicate columns
+                df = df.loc[:, ~df.columns.duplicated()]
+
                 # Rename any column that contains 'Close'
                 for col in df.columns:
                     if 'Close' in col:
@@ -50,6 +52,7 @@ if st.button("Predict Next Price"):
 
                 df["Datetime"] = df.index
                 df.set_index("Datetime", inplace=True)
+
                 st.write("### 📄 Full Stock Price Data")
                 st.dataframe(df)
                 st.metric("📌 Latest Price", f"₹ {latest_price:.2f}")
